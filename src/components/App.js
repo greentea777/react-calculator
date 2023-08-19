@@ -1,6 +1,6 @@
 import "./App.css";
-import { calculatorButtons } from "../data/calculator-base-button-data";
-// import { calculatorButtons } from "../data/calculator-bonus-03-button-data";
+// import { calculatorButtons } from "../data/calculator-base-button-data";
+import { calculatorButtons } from "../data/calculator-bonus-03-button-data";
 
 import Button from "./Button";
 import { useState } from "react";
@@ -15,6 +15,12 @@ function App() {
   const [isOperatorClicked, setIsOperatorClicked] = useState(false);
   // equal btn state
   const [isEqual, setIsEqual] = useState(false);
+
+  const [operator, setOperator] = useState("");
+
+  const [memoryValue, setMemoryValue] = useState("0");
+
+  const checkLastChar = () => {};
 
   const handleDisplay = (value, type, text) => {
     // if init num 0, replace 0 to input num
@@ -69,8 +75,54 @@ function App() {
           }
           break;
         case "operator":
+          switch (value) {
+            case "Multiply":
+              value = "*";
+              break;
+            case "Divide":
+              value = "/";
+              break;
+            case "Add":
+              value = "+";
+              break;
+            case "Subtract":
+              value = "-";
+              break;
+            case "Percent":
+              value = "-";
+              break;
+
+            case "Square Root":
+              // let index = outputText.lastIndexOf(operator);
+              // let signText = outputText
+              //   .toString()
+              //   .substring(index + 1, outputText.length);
+              // let newText = outputText.toString().substring(0, index + 1);
+              // console.log(signText);
+              // let squareRootResult = Math.sqrt(signText);
+
+              // newText = newText + squareRootResult.toString();
+              // console.log(newText);
+
+              // let signValue = outputValue
+              //   .toString()
+              //   .substring(index + 1, outputValue.length);
+              // let newValue = outputValue.toString().substring(0, index + 1);
+              // newValue = newValue + signValue * -1;
+
+              break;
+          }
+
+          setOperator(text);
+
           // allow user to replace operator
           if (isOperatorClicked) {
+            // if (text == "\u221a") {
+            //   setOutputValue((o) => (o += value));
+            //   setOutputText((o) => (o += text));
+            //   setIsOperatorClicked(true);
+            //   setIsEqual(false);
+            // } else {
             let newText = outputText
               .toString()
               .substring(0, outputText.length - 1);
@@ -82,6 +134,7 @@ function App() {
             newValue = newValue + value.toString();
             setOutputText(newText);
             setOutputValue(newValue);
+            // }
           } else {
             setOutputValue((o) => (o += value));
             setOutputText((o) => (o += text));
@@ -132,6 +185,8 @@ function App() {
                 setOutputText(newText);
                 setOutputValue(newValue);
               }
+
+              setIsOperatorClicked(false);
             }
           } else {
             // AC, reset
@@ -140,6 +195,127 @@ function App() {
             setIsOperatorClicked(false);
             setIsEqual(false);
           }
+          break;
+        case "sign":
+          if (!operator) {
+            setOutputText((text) => (text * -1).toString());
+            setOutputValue((value) => (value * -1).toString());
+            return;
+          }
+          let index = outputText.lastIndexOf(operator);
+          let signText = outputText
+            .toString()
+            .substring(index + 1, outputText.length);
+          let newText = outputText.toString().substring(0, index + 1);
+
+          if (signText.length === 0) {
+            console.log("????");
+            return;
+          }
+
+          newText = newText + signText * -1;
+
+          let signValue = outputValue
+            .toString()
+            .substring(index + 1, outputValue.length);
+          let newValue = outputValue.toString().substring(0, index + 1);
+          newValue = newValue + signValue * -1;
+
+          setOutputText(newText);
+          setOutputValue(newValue);
+
+          break;
+
+        case "memory":
+          // if (!operator) {
+          //   setMemoryValue(outputText);
+          //   return;
+          // }
+
+          switch (value) {
+            case "Memory Save":
+              // setIsOperatorClicked(false);
+              let outputArr = outputText.split("");
+              let lastOperator = outputArr.reverse().find((item) => {
+                let yyyy = parseInt(item);
+                return isNaN(yyyy) === true;
+              });
+
+              setOperator(lastOperator);
+
+              if (!operator) {
+                setMemoryValue(outputText);
+                return;
+              }
+
+              // change operator to last operator
+              let index = outputText.lastIndexOf(lastOperator);
+              let memoryText = null;
+              // if before the last operator is still not a num, store the last symbol
+              if (isNaN(outputText[index - 1])) {
+                memoryText = outputText
+                  .toString()
+                  .substring(index, outputText.length);
+              } else {
+                memoryText = outputText
+                  .toString()
+                  .substring(index + 1, outputText.length);
+              }
+              if (memoryText.length > 0) {
+                setMemoryValue(memoryText);
+              }
+
+              break;
+
+            case "Memory Clear":
+              setIsOperatorClicked(false);
+              setMemoryValue("0");
+              break;
+
+            // !not done /////
+            case "Memory Recall":
+              setIsOperatorClicked(false);
+              if (outputText.length === 1 && outputText === "0") {
+                console.log("???");
+
+                setOutputText(memoryValue);
+                setOutputValue(memoryValue);
+              } else {
+                if (
+                  isNaN(outputText.toString().charAt(outputText.length - 1))
+                ) {
+                  setOutputText((o) => (o += memoryValue));
+                  setOutputValue((o) => (o += memoryValue));
+                }
+              }
+
+              break;
+            case "Memory Subtract":
+              setIsOperatorClicked(false);
+              let memorySubtractResult = eval(
+                `{${memoryValue} - ${eval(outputValue)} }`
+              );
+              setMemoryValue(memorySubtractResult.toString());
+
+              // setOutputText(memorySubtractResult.toString());
+              // setOutputValue(memorySubtractResult.toString());
+
+              break;
+            case "Memory Addition":
+              setIsOperatorClicked(false);
+              let memoryAdditionResult = eval(
+                `{${eval(outputValue)} + ${memoryValue}}`
+              );
+              setMemoryValue(memoryAdditionResult.toString());
+              // setOutputText(memoryAdditionResult.toString());
+              // setOutputValue(memoryAdditionResult.toString());
+              break;
+          }
+          break;
+        case "decimal":
+          setIsOperatorClicked(false);
+          setOutputValue((o) => (o += value));
+          setOutputText((o) => (o += text));
           break;
       }
     }
