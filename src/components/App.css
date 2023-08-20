@@ -1,47 +1,188 @@
-.App {
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Electrolize&display=swap");
+
+html {
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+body {
+  background-color: black;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.App {
+  width: 50%;
+  margin: 0 auto;
+  border: 4px solid white;
+  border-radius: 5px;
+  padding: 0.5rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.display {
+  position: relative;
+  border: 4px solid gray;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  text-align: right;
+  font-size: 3rem;
+  font-family: "Electrolize", sans-serif;
+
+  color: lawngreen;
 }
 
-button {
-  font-size: 2rem;
-  margin: 0 1rem;
+.number-display {
+  overflow-x: auto;
+  letter-spacing: 6px;
 }
 
-.display p {
-  font-size: 2rem;
+.memory-sign {
+  font-size: 0.8rem;
+}
+
+.btn-wrapper {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 10px;
+  /* padding: 20px; */
+  /* border: 1px solid #ccc; */
+  /* border-radius: 5px; */
+  /* background-color: #fff; */
+  /* box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1); */
+  grid-template-areas:
+    ". ms mc mr m-plus m-minus"
+    "ac seven eight nine percent square-root"
+    "c four five six multiply divide"
+    ". one two three add subtract"
+    ". zero decimal sign equal equal";
+}
+
+.btn-wrapper button {
+  border: none;
+  padding: 0.5rem;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.operator {
+  background-color: orange;
+}
+
+.memory {
+  background-color: yellow;
+}
+
+.clear {
+  background-color: red;
+  color: white;
+}
+
+.number,
+.decimal,
+.sign {
+  background-color: gray;
+  color: white;
+}
+
+.enter {
+  background-color: blue;
+  color: white;
+}
+
+.ac {
+  grid-area: ac;
+}
+.c {
+  grid-area: c;
+}
+
+.ms {
+  grid-area: ms;
+}
+
+.mc {
+  grid-area: mc;
+}
+.mr {
+  grid-area: mr;
+}
+.m-plus {
+  grid-area: m-plus;
+}
+
+.m-minus {
+  grid-area: m-minus;
+}
+
+.seven {
+  grid-area: seven;
+}
+.eight {
+  grid-area: eight;
+}
+.nine {
+  grid-area: nine;
+}
+.percent {
+  grid-area: percent;
+}
+.square-root {
+  grid-area: square-root;
+}
+
+.four {
+  grid-area: four;
+}
+.five {
+  grid-area: five;
+}
+.six {
+  grid-area: six;
+}
+.multiply {
+  grid-area: multiply;
+}
+.divide {
+  grid-area: divide;
+}
+
+.one {
+  grid-area: one;
+}
+.two {
+  grid-area: two;
+}
+.three {
+  grid-area: three;
+}
+.add {
+  grid-area: add;
+}
+.subtract {
+  grid-area: subtract;
+}
+
+.zero {
+  grid-area: zero;
+}
+.decimal {
+  grid-area: decimal;
+}
+.sign {
+  grid-area: sign;
+}
+.equal {
+  grid-area: equal;
+}
+.equal {
+  grid-area: equal;
 }

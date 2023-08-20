@@ -7,328 +7,342 @@ import { useState } from "react";
 import Display from "./Display";
 
 function App() {
-  // display text
-  const [outputText, setOutputText] = useState("0");
-  // calculation state
-  const [outputValue, setOutputValue] = useState("0");
-  // operator btn state
-  const [isOperatorClicked, setIsOperatorClicked] = useState(false);
-  // equal btn state
+  const [displayStr, setDisplayStr] = useState("0");
+  const [mathStr, setMathStr] = useState("0");
+  const [operator, setOperator] = useState(null);
+  // const [isOperatorClicked, setIsOperatorClicked] = useState(false);
   const [isEqual, setIsEqual] = useState(false);
 
-  const [operator, setOperator] = useState("");
-
-  const [memoryValue, setMemoryValue] = useState("0");
-
-  const checkLastChar = () => {};
+  const [memoryValue, setMemoryValue] = useState(null);
 
   const handleDisplay = (value, type, text) => {
-    // if init num 0, replace 0 to input num
-    if (outputText.length === 1 && outputText === "0" && type === "number") {
-      setOutputText(text.toString());
-      setOutputValue(value.toString());
-    } else {
-      // check btn type
-      switch (type) {
-        case "number":
-          // if user has clicked equal btn
-          if (isEqual) {
-            // rest calculator
-            setOutputText(text.toString());
-            setOutputValue(value.toString());
-            setIsOperatorClicked(false);
-            setIsEqual(false);
+    switch (type) {
+      case "number":
+        if (isEqual) {
+          // rest calculator
+          setDisplayStr(text.toString());
+          setMathStr(value.toString());
+          setIsEqual(false);
+          return;
+        }
+
+        // avoid user clicking multi zero
+        const lastDigit = displayStr.charAt(displayStr.length - 1);
+
+        const lastTwolastDigit = displayStr.charAt(displayStr.length - 2);
+
+        if (displayStr === "0") {
+          setDisplayStr(text.toString());
+          setMathStr(value.toString());
+        } else if (
+          isNaN(parseInt(lastTwolastDigit)) &&
+          lastDigit === "0" &&
+          lastTwolastDigit !== "."
+        ) {
+          if (text.toString() === "0") {
             return;
           } else {
-            // avoid user clicking multi zero
-            const lastChar = outputText
-              .toString()
-              .charAt(outputText.length - 1);
-
-            const lastTwoChar = outputText
-              .toString()
-              .charAt(outputText.length - 2);
-            // check if second-to-last is not a num, and last char is zero
-            if (isNaN(parseInt(lastTwoChar)) && lastChar === "0") {
-              // if input 0, end function
-              if (text.toString() === "0") {
-                return;
-              } else {
-                // replace last char to new input
-                let newText = outputText
-                  .toString()
-                  .substring(0, outputText.length - 1);
-                let newValue = outputValue
-                  .toString()
-                  .substring(0, outputValue.length - 1);
-
-                newText = newText + text.toString();
-                newValue = newValue + value.toString();
-                setOutputText(newText);
-                setOutputValue(newValue);
-              }
-            } else {
-              setOutputValue((o) => (o += value));
-              setOutputText((o) => (o += text));
-              setIsOperatorClicked(false);
-            }
-          }
-          break;
-        case "operator":
-          switch (value) {
-            case "Multiply":
-              value = "*";
-              break;
-            case "Divide":
-              value = "/";
-              break;
-            case "Add":
-              value = "+";
-              break;
-            case "Subtract":
-              value = "-";
-              break;
-            case "Percent":
-              value = "-";
-              break;
-
-            case "Square Root":
-              // let index = outputText.lastIndexOf(operator);
-              // let signText = outputText
-              //   .toString()
-              //   .substring(index + 1, outputText.length);
-              // let newText = outputText.toString().substring(0, index + 1);
-              // console.log(signText);
-              // let squareRootResult = Math.sqrt(signText);
-
-              // newText = newText + squareRootResult.toString();
-              // console.log(newText);
-
-              // let signValue = outputValue
-              //   .toString()
-              //   .substring(index + 1, outputValue.length);
-              // let newValue = outputValue.toString().substring(0, index + 1);
-              // newValue = newValue + signValue * -1;
-
-              break;
-          }
-
-          setOperator(text);
-
-          // allow user to replace operator
-          if (isOperatorClicked) {
-            // if (text == "\u221a") {
-            //   setOutputValue((o) => (o += value));
-            //   setOutputText((o) => (o += text));
-            //   setIsOperatorClicked(true);
-            //   setIsEqual(false);
-            // } else {
-            let newText = outputText
-              .toString()
-              .substring(0, outputText.length - 1);
-            let newValue = outputValue
-              .toString()
-              .substring(0, outputValue.length - 1);
-
+            // replace last char to new input
+            let newText = displayStr.substring(0, displayStr.length - 1);
+            let newValue = mathStr.substring(0, mathStr.length - 1);
             newText = newText + text.toString();
             newValue = newValue + value.toString();
-            setOutputText(newText);
-            setOutputValue(newValue);
-            // }
-          } else {
-            setOutputValue((o) => (o += value));
-            setOutputText((o) => (o += text));
-            setIsOperatorClicked(true);
-            setIsEqual(false);
+            setDisplayStr(newText);
+            setMathStr(newValue);
           }
-
-          break;
-        case "enter":
-          const lastChar = outputText.toString().charAt(outputText.length - 1);
-          // if last char is not a num, end function
-          if (isNaN(parseInt(lastChar))) {
-            return;
-          } else {
-            // calculate result and rest values
-            setOutputText(eval(outputValue).toString());
-            setOutputValue(eval(outputValue).toString());
-            setIsOperatorClicked(false);
-            setIsEqual(true);
-          }
-          break;
-        case "clear":
-          // AC or C
-          if (value === "Clear") {
-            // if display e and error message, clear all
-            if (
-              outputText.toString().includes("e") ||
-              outputText.toString() === "Infinity" ||
-              outputText.toString() === "NaN"
-            ) {
-              setOutputText("0");
-              setOutputValue("0");
-              setIsOperatorClicked(false);
-              setIsEqual(false);
-            } else {
-              // delete one by one from last char
-              let newText = outputText
-                .toString()
-                .substring(0, outputText.length - 1);
-              let newValue = outputValue
-                .toString()
-                .substring(0, outputValue.length - 1);
-              // if display value is empty, set it back to 0
-              if (newText === "") {
-                setOutputText("0");
-                setOutputValue("0");
-              } else {
-                setOutputText(newText);
-                setOutputValue(newValue);
-              }
-
-              setIsOperatorClicked(false);
-            }
-          } else {
-            // AC, reset
-            setOutputText("0");
-            setOutputValue("0");
-            setIsOperatorClicked(false);
-            setIsEqual(false);
-          }
-          break;
-        case "sign":
-          if (!operator) {
-            setOutputText((text) => (text * -1).toString());
-            setOutputValue((value) => (value * -1).toString());
-            return;
-          }
-          let index = outputText.lastIndexOf(operator);
-          let signText = outputText
-            .toString()
-            .substring(index + 1, outputText.length);
-          let newText = outputText.toString().substring(0, index + 1);
-
-          if (signText.length === 0) {
-            console.log("????");
-            return;
-          }
-
-          newText = newText + signText * -1;
-
-          let signValue = outputValue
-            .toString()
-            .substring(index + 1, outputValue.length);
-          let newValue = outputValue.toString().substring(0, index + 1);
-          newValue = newValue + signValue * -1;
-
-          setOutputText(newText);
-          setOutputValue(newValue);
-
-          break;
-
-        case "memory":
-          // if (!operator) {
-          //   setMemoryValue(outputText);
-          //   return;
+        } else {
+          // Check if the last character is a closing parenthesis
+          // if (mathStr.endsWith(")")) {
+          //   // Append the input as a multiplication operation
+          //   setDisplayStr(`${displayStr}*${text}`);
+          //   setMathStr(`${mathStr}*${value}`);
+          // } else {
+          //   setDisplayStr(`${displayStr}${text}`);
+          //   setMathStr(`${mathStr}${value}`);
           // }
 
-          switch (value) {
-            case "Memory Save":
-              // setIsOperatorClicked(false);
-              let outputArr = outputText.split("");
-              let lastOperator = outputArr.reverse().find((item) => {
-                let yyyy = parseInt(item);
-                return isNaN(yyyy) === true;
-              });
-
-              setOperator(lastOperator);
-
-              if (!operator) {
-                setMemoryValue(outputText);
-                return;
-              }
-
-              // change operator to last operator
-              let index = outputText.lastIndexOf(lastOperator);
-              let memoryText = null;
-              // if before the last operator is still not a num, store the last symbol
-              if (isNaN(outputText[index - 1])) {
-                memoryText = outputText
-                  .toString()
-                  .substring(index, outputText.length);
+          setDisplayStr(`${displayStr}${text}`);
+          setMathStr(`${mathStr}${value}`);
+        }
+        break;
+      case "operator":
+        switch (value) {
+          case "Multiply":
+            value = "*";
+            break;
+          case "Divide":
+            value = "/";
+            break;
+          case "Add":
+            value = "+";
+            break;
+          case "Subtract":
+            value = "-";
+            break;
+          case "Percent":
+            value = "%";
+            break;
+          case "Square Root":
+            break;
+        }
+        setIsEqual(false);
+        if (value === "%") {
+          let [input, index] = findOperator(displayStr);
+          if (input !== null) {
+            if (input && input !== "0") {
+              input = input / 100;
+              if (index !== -1) {
+                let subMathString = mathStr.substring(0, index);
+                let subDisplayString = displayStr.substring(0, index);
+                setDisplayStr(`${subDisplayString}${input.toString()}`);
+                setMathStr(`${subMathString}${input.toString()}`);
               } else {
-                memoryText = outputText
-                  .toString()
-                  .substring(index + 1, outputText.length);
+                setDisplayStr(input.toString());
+                setMathStr(input.toString());
               }
-              if (memoryText.length > 0) {
-                setMemoryValue(memoryText);
+            }
+          }
+          return;
+        }
+        if (value === "Square Root") {
+          let [input, index] = findOperator(displayStr);
+          if (input !== null) {
+            if (input && input !== "0") {
+              input = Math.sqrt(input);
+              if (index !== -1) {
+                let subMathString = mathStr.substring(0, index);
+                let subDisplayString = displayStr.substring(0, index);
+                setDisplayStr(`${subDisplayString}${input.toString()}`);
+                setMathStr(`${subMathString}${input.toString()}`);
+              } else {
+                setDisplayStr(input.toString());
+                setMathStr(input.toString());
               }
+            }
+          }
+          return;
+        }
 
-              break;
+        let last = displayStr.charAt(displayStr.length - 1);
+        if (isNaN(last) && last !== ".") {
+          let subText = displayStr.substring(0, displayStr.length - 1);
+          let subValue = mathStr.substring(0, mathStr.length - 1);
+          setDisplayStr(`${subText}${text}`);
+          setMathStr(`${subValue}${value}`);
+          setOperator(value);
+        } else {
+          if (operator) {
+            setDisplayStr(`${eval(mathStr).toString()}${text}`);
+            setMathStr(`${eval(mathStr).toString()}${value}`);
+            setOperator(value);
+          } else {
+            setDisplayStr(`${displayStr}${text}`);
+            setMathStr(`${mathStr}${value}`);
+            setOperator(value);
+          }
+        }
+        break;
+      case "enter":
+        const lastChar = displayStr.charAt(displayStr.length - 1);
+        if (isNaN(parseInt(lastChar)) || !operator) {
+          return;
+        } else {
+          setIsEqual(true);
+          setDisplayStr(eval(mathStr).toString());
+          setMathStr(eval(mathStr).toString());
+          setOperator(null);
+        }
+        break;
 
-            case "Memory Clear":
-              setIsOperatorClicked(false);
-              setMemoryValue("0");
-              break;
+      case "clear":
+        // AC or C
+        if (value === "Clear") {
+          // if display e and error message, clear all
+          if (
+            displayStr.toString().includes("e") ||
+            displayStr.toString().includes("Infinity") ||
+            displayStr.toString().includes("NaN")
+          ) {
+            setDisplayStr("0");
+            setMathStr("0");
+            setIsEqual(false);
+          } else {
+            // if (mathStr.endsWith(")") || mathStr.endsWith("(")) {
+            //   let newValue = mathStr.substring(0, mathStr.length - 2);
+            //   let newText = displayStr.substring(0, displayStr.length - 1);
+            //   if (newText === "") {
+            //     setDisplayStr("0");
+            //     setMathStr("0");
+            //   } else {
+            //     setDisplayStr(newText);
+            //     setMathStr(newValue);
+            //   }
+            // } else {
+            if (isNaN(displayStr.charAt(displayStr.length - 1))) {
+              setOperator(null);
+            }
 
-            // !not done /////
-            case "Memory Recall":
-              setIsOperatorClicked(false);
-              if (outputText.length === 1 && outputText === "0") {
-                console.log("???");
+            let newText = displayStr.substring(0, displayStr.length - 1).trim();
+            let newValue = mathStr.substring(0, mathStr.length - 1).trim();
+            // if display value is empty, set it back to 0
+            if (newText === "") {
+              setDisplayStr("0");
+              setMathStr("0");
+            } else {
+              setDisplayStr(newText);
+              setMathStr(newValue);
+            }
+            // }
+          }
+        } else {
+          // AC, reset
+          setDisplayStr("0");
+          setMathStr("0");
+          setOperator(null);
+          setIsEqual(false);
+        }
+        break;
 
-                setOutputText(memoryValue);
-                setOutputValue(memoryValue);
+      case "sign":
+        let [input, index] = findOperator(displayStr);
+        if (input !== null) {
+          if (input && input !== "0") {
+            input = input * -1;
+            if (index !== -1) {
+              let subMathString = mathStr.substring(0, index);
+              let subDisplayString = displayStr.substring(0, index);
+              setDisplayStr(`${subDisplayString}${input.toString()}`);
+              setMathStr(`${subMathString} ${input.toString()}`);
+            } else {
+              setDisplayStr(input.toString());
+              setMathStr(input.toString());
+            }
+          }
+        }
+        break;
+
+      case "memory":
+        switch (value) {
+          case "Memory Save":
+            let [input] = findOperator(mathStr);
+            setMemoryValue(input);
+            break;
+          case "Memory Clear":
+            setMemoryValue(null);
+            break;
+          case "Memory Recall":
+            if (memoryValue) {
+              if (displayStr.length === 1 && displayStr === "0") {
+                setDisplayStr(memoryValue);
+                setMathStr(memoryValue);
               } else {
                 if (
-                  isNaN(outputText.toString().charAt(outputText.length - 1))
+                  isNaN(displayStr.toString().charAt(displayStr.length - 1))
                 ) {
-                  setOutputText((o) => (o += memoryValue));
-                  setOutputValue((o) => (o += memoryValue));
+                  setDisplayStr(`${displayStr}${memoryValue}`);
+                  setMathStr(`${mathStr}${memoryValue}`);
                 }
               }
+            }
 
-              break;
-            case "Memory Subtract":
-              setIsOperatorClicked(false);
+            break;
+          case "Memory Subtract":
+            if (memoryValue) {
+              if (isNaN(displayStr.toString().charAt(displayStr.length - 1))) {
+                return;
+              }
               let memorySubtractResult = eval(
-                `{${memoryValue} - ${eval(outputValue)} }`
+                `{${memoryValue} - ${eval(mathStr)}}`
               );
               setMemoryValue(memorySubtractResult.toString());
-
-              // setOutputText(memorySubtractResult.toString());
-              // setOutputValue(memorySubtractResult.toString());
-
-              break;
-            case "Memory Addition":
-              setIsOperatorClicked(false);
+            }
+            break;
+          case "Memory Addition":
+            if (memoryValue) {
+              if (isNaN(displayStr.toString().charAt(displayStr.length - 1))) {
+                return;
+              }
               let memoryAdditionResult = eval(
-                `{${eval(outputValue)} + ${memoryValue}}`
+                `{${eval(mathStr)} + ${memoryValue}}`
               );
               setMemoryValue(memoryAdditionResult.toString());
-              // setOutputText(memoryAdditionResult.toString());
-              // setOutputValue(memoryAdditionResult.toString());
-              break;
+            }
+            break;
+        }
+        break;
+      case "decimal":
+        // if (!isNaN(Number(displayStr))) {
+        //   if (displayStr.indexOf(".") !== -1) {
+        //     // There's already a decimal point, allow another input
+        //     setDisplayStr(`${displayStr}${text}`);
+        //     setMathStr(`${mathStr}${value}`);
+        //   } else {
+        //     // No decimal point yet, so check for valid input and add the decimal point
+        //     if (text === ".") {
+        //       setDisplayStr(`${displayStr}${text}`);
+        //       setMathStr(`${mathStr}${value}`);
+        //     }
+        //   }
+        // } else {
+        //   // Handle non-numeric input
+        //   if (text === ".") {
+        //     setDisplayStr(`${displayStr}${text}`);
+        //     setMathStr(`${mathStr}${value}`);
+        //   }
+        // }
+
+        if (!isNaN(Number(mathStr))) {
+          console.log("NUM");
+          if (mathStr.indexOf(".") === -1) {
+            setDisplayStr(`${displayStr}${text}`);
+            setMathStr(`${mathStr}${value}`);
           }
-          break;
-        case "decimal":
-          setIsOperatorClicked(false);
-          setOutputValue((o) => (o += value));
-          setOutputText((o) => (o += text));
-          break;
-      }
+        } else {
+          console.log("NOT NUM");
+          console.log(mathStr.lastIndexOf(operator) + 1);
+          let lastNumber = mathStr.substring(mathStr.lastIndexOf(operator) + 1);
+          console.log(lastNumber);
+          if (lastNumber.indexOf(".") === -1) {
+            console.log("????");
+            setDisplayStr(`${displayStr}${text}`);
+            setMathStr(`${mathStr}${value}`);
+          }
+        }
+
+        break;
+    }
+  };
+
+  const findOperator = (outputText) => {
+    let outputArr = outputText.split("");
+    let lastOperator = outputArr.reverse().find((item) => {
+      return isNaN(parseInt(item)) === true && item !== ".";
+    });
+
+    let index = outputText.lastIndexOf(lastOperator);
+    let subString = null;
+    if (isNaN(outputText[index - 1])) {
+      subString = outputText.substring(index, outputText.length);
+    } else {
+      subString = outputText.substring(index + 1, outputText.length);
+      index = index + 1;
+    }
+    if (subString.length > 0) {
+      return [subString, index];
+    } else {
+      return [null, null];
     }
   };
 
   return (
     <div className="App">
-      <h1>Calculator</h1>
-      <Display output={outputText} />
-
-      {calculatorButtons.map((button, i) => (
-        <Button key={i} button={button} handleDisplay={handleDisplay} />
-      ))}
+      <h1>React Calculator</h1>
+      <Display displayStr={displayStr} memoryValue={memoryValue} />
+      <div className="btn-wrapper">
+        {calculatorButtons.map((button, i) => (
+          <Button key={i} button={button} handleDisplay={handleDisplay} />
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 const Button = ({ button, handleDisplay }) => {
-  const handleOutput = (e) => {
-    const btnValue = e.target.value;
+  const handleOutput = () => {
+    const btnValue = button.value;
     const btnType = button.type;
     const btnText = button.text;
 
@@ -11,7 +11,7 @@ const Button = ({ button, handleDisplay }) => {
     <button
       onClick={handleOutput}
       value={button.value}
-      className={button.className}
+      className={`${button.className} ${button.type}`}
     >
       {button.text}
     </button>
