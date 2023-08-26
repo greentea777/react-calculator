@@ -47,6 +47,10 @@ body {
   font-size: 0.8rem;
 }
 
+.history-displaystr {
+  font-size: 0.9rem;
+}
+
 .btn-wrapper {
   display: grid;
   grid-template-columns: repeat(6, 1fr);

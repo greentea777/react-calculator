@@ -12,14 +12,16 @@ function App() {
   const [operator, setOperator] = useState(null);
   // const [isOperatorClicked, setIsOperatorClicked] = useState(false);
   const [isEqual, setIsEqual] = useState(false);
-
   const [memoryValue, setMemoryValue] = useState(null);
+
+  const [prevDisplayStr, setPrevDisplayStr] = useState("");
 
   const handleDisplay = (value, type, text) => {
     switch (type) {
       case "number":
         if (isEqual) {
           // rest calculator
+          setPrevDisplayStr("");
           setDisplayStr(text.toString());
           setMathStr(value.toString());
           setIsEqual(false);
@@ -27,9 +29,9 @@ function App() {
         }
 
         // avoid user clicking multi zero
-        const lastDigit = displayStr.charAt(displayStr.length - 1);
+        let lastDigit = displayStr.charAt(displayStr.length - 1);
 
-        const lastTwolastDigit = displayStr.charAt(displayStr.length - 2);
+        let lastTwolastDigit = displayStr.charAt(displayStr.length - 2);
 
         if (displayStr === "0") {
           setDisplayStr(text.toString());
@@ -124,17 +126,24 @@ function App() {
         }
 
         let last = displayStr.charAt(displayStr.length - 1);
+        let lastTwo = displayStr.charAt(displayStr.length - 2);
         if (isNaN(last) && last !== ".") {
-          let subText = displayStr.substring(0, displayStr.length - 1);
-          let subValue = mathStr.substring(0, mathStr.length - 1);
-          setDisplayStr(`${subText}${text}`);
-          setMathStr(`${subValue}${value}`);
-          setOperator(value);
+          // console.log(lastTwo);
+          if (!isNaN(lastTwo) || lastTwo === ".") {
+            let subText = displayStr.substring(0, displayStr.length - 1);
+            let subValue = mathStr.substring(0, mathStr.length - 1);
+            setDisplayStr(`${subText}${text}`);
+            setMathStr(`${subValue}${value}`);
+            setOperator(value);
+          }
         } else {
           if (operator) {
-            setDisplayStr(`${eval(mathStr).toString()}${text}`);
-            setMathStr(`${eval(mathStr).toString()}${value}`);
-            setOperator(value);
+            if (last !== ".") {
+              setPrevDisplayStr(displayStr);
+              setDisplayStr(`${eval(mathStr).toString()}${text}`);
+              setMathStr(`${eval(mathStr).toString()}${value}`);
+              setOperator(value);
+            }
           } else {
             setDisplayStr(`${displayStr}${text}`);
             setMathStr(`${mathStr}${value}`);
@@ -147,6 +156,7 @@ function App() {
         if (isNaN(parseInt(lastChar)) || !operator) {
           return;
         } else {
+          setPrevDisplayStr(displayStr);
           setIsEqual(true);
           setDisplayStr(eval(mathStr).toString());
           setMathStr(eval(mathStr).toString());
@@ -196,6 +206,7 @@ function App() {
           }
         } else {
           // AC, reset
+          setPrevDisplayStr("");
           setDisplayStr("0");
           setMathStr("0");
           setOperator(null);
@@ -292,7 +303,7 @@ function App() {
         // }
 
         if (!isNaN(Number(mathStr))) {
-          console.log("NUM");
+          // console.log("NUM");
           if (mathStr.indexOf(".") === -1) {
             setDisplayStr(`${displayStr}${text}`);
             setMathStr(`${mathStr}${value}`);
@@ -318,15 +329,17 @@ function App() {
     let lastOperator = outputArr.reverse().find((item) => {
       return isNaN(parseInt(item)) === true && item !== ".";
     });
-
+    console.log(lastOperator);
     let index = outputText.lastIndexOf(lastOperator);
     let subString = null;
-    if (isNaN(outputText[index - 1])) {
+    if (isNaN(outputText[index - 1]) && outputText[index - 1] !== ".") {
       subString = outputText.substring(index, outputText.length);
     } else {
       subString = outputText.substring(index + 1, outputText.length);
       index = index + 1;
     }
+
+    console.log(subString);
     if (subString.length > 0) {
       return [subString, index];
     } else {
@@ -337,7 +350,11 @@ function App() {
   return (
     <div className="App">
       <h1>React Calculator</h1>
-      <Display displayStr={displayStr} memoryValue={memoryValue} />
+      <Display
+        displayStr={displayStr}
+        memoryValue={memoryValue}
+        prevDisplayStr={prevDisplayStr}
+      />
       <div className="btn-wrapper">
         {calculatorButtons.map((button, i) => (
           <Button key={i} button={button} handleDisplay={handleDisplay} />
