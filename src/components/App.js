@@ -257,24 +257,26 @@ function App() {
         }
         break;
       case "decimal":
-        if (!isNaN(Number(mathStr))) {
-          // console.log("NUM");
-          if (mathStr.indexOf(".") === -1) {
+        if (!isNaN(Number(displayStr))) {
+          if (displayStr.indexOf(".") === -1) {
             setDisplayStr(`${displayStr}${text}`);
             setMathStr(`${mathStr}${value}`);
           }
         } else {
-          console.log("NOT NUM");
-          console.log(mathStr.lastIndexOf(operator) + 1);
-          let lastNumber = mathStr.substring(mathStr.lastIndexOf(operator) + 1);
-          console.log(lastNumber);
+          let outputArr = displayStr.split("");
+          let lastOperator = outputArr.reverse().find((item) => {
+            return isNaN(parseInt(item)) === true && item !== ".";
+          });
+
+          setOperator(lastOperator);
+          let lastNumber = displayStr.substring(
+            displayStr.lastIndexOf(lastOperator) + 1
+          );
           if (lastNumber.indexOf(".") === -1) {
-            console.log("????");
             setDisplayStr(`${displayStr}${text}`);
             setMathStr(`${mathStr}${value}`);
           }
         }
-
         break;
     }
   };
@@ -284,7 +286,6 @@ function App() {
     let lastOperator = outputArr.reverse().find((item) => {
       return isNaN(parseInt(item)) === true && item !== ".";
     });
-    console.log(lastOperator);
     let index = outputText.lastIndexOf(lastOperator);
     let subString = null;
     if (isNaN(outputText[index - 1]) && outputText[index - 1] !== ".") {
@@ -294,7 +295,6 @@ function App() {
       index = index + 1;
     }
 
-    console.log(subString);
     if (subString.length > 0) {
       return [subString, index];
     } else {
