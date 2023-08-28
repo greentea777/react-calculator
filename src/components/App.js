@@ -176,7 +176,7 @@ function App() {
         break;
       case "enter":
         const lastChar = displayStr.charAt(displayStr.length - 1);
-        if ((isNaN(parseInt(lastChar)) && lastChar === ".") || !operator) {
+        if (isNaN(parseInt(lastChar)) || lastChar === ".") {
           return;
         } else {
           let outputArr = displayStr.split("");
