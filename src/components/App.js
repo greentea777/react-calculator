@@ -176,7 +176,7 @@ function App() {
         break;
       case "enter":
         const lastChar = displayStr.charAt(displayStr.length - 1);
-        if (isNaN(parseInt(lastChar)) || lastChar === ".") {
+        if (isNaN(parseInt(lastChar)) || lastChar === "." || !operator) {
           return;
         } else {
           let outputArr = displayStr.split("");
@@ -245,7 +245,7 @@ function App() {
               });
               let operatorIndex = displayStr.indexOf(lastOperator);
               if (!isNaN(displayStr[operatorIndex - 1])) {
-                setOperator(null);
+                setOperator(lastOperator);
               }
             }
             let newText = displayStr.substring(0, displayStr.length - 1).trim();
