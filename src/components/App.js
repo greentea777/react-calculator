@@ -9,9 +9,7 @@ import Big from "big.js";
 
 function App() {
   const [displayStr, setDisplayStr] = useState("0");
-  const [mathStr, setMathStr] = useState("0");
   const [operator, setOperator] = useState(null);
-  // const [isOperatorClicked, setIsOperatorClicked] = useState(false);
   const [isEqual, setIsEqual] = useState(false);
   const [memoryValue, setMemoryValue] = useState(null);
 
@@ -24,7 +22,7 @@ function App() {
           // rest calculator
           setPrevDisplayStr("");
           setDisplayStr(text.toString());
-          setMathStr(value.toString());
+          // setMathStr(value.toString());
           setIsEqual(false);
           return;
         }
@@ -36,7 +34,7 @@ function App() {
 
         if (displayStr === "0") {
           setDisplayStr(text.toString());
-          setMathStr(value.toString());
+          // setMathStr(value.toString());
         } else if (
           isNaN(parseInt(lastTwolastDigit)) &&
           lastDigit === "0" &&
@@ -47,15 +45,11 @@ function App() {
           } else {
             // replace last char to new input
             let newText = displayStr.substring(0, displayStr.length - 1);
-            let newValue = mathStr.substring(0, mathStr.length - 1);
             newText = newText + text.toString();
-            newValue = newValue + value.toString();
             setDisplayStr(newText);
-            setMathStr(newValue);
           }
         } else {
           setDisplayStr(`${displayStr}${text}`);
-          setMathStr(`${mathStr}${value}`);
         }
         break;
       case "operator":
@@ -86,13 +80,10 @@ function App() {
               input = new Big(input);
               input = input.div(100);
               if (index !== -1) {
-                let subMathString = mathStr.substring(0, index);
                 let subDisplayString = displayStr.substring(0, index);
                 setDisplayStr(`${subDisplayString}${input.toString()}`);
-                setMathStr(`${subMathString}${input.toString()}`);
               } else {
                 setDisplayStr(input.toString());
-                setMathStr(input.toString());
               }
             }
           }
@@ -108,15 +99,11 @@ function App() {
               } catch (err) {
                 input = "NaN";
               }
-              // input = Math.sqrt(input);
               if (index !== -1) {
-                let subMathString = mathStr.substring(0, index);
                 let subDisplayString = displayStr.substring(0, index);
                 setDisplayStr(`${subDisplayString}${input.toString()}`);
-                setMathStr(`${subMathString}${input.toString()}`);
               } else {
                 setDisplayStr(input.toString());
-                setMathStr(input.toString());
               }
             }
           }
@@ -126,12 +113,9 @@ function App() {
         let last = displayStr.charAt(displayStr.length - 1);
         let lastTwo = displayStr.charAt(displayStr.length - 2);
         if (isNaN(last) && last !== ".") {
-          // console.log(lastTwo);
           if (!isNaN(lastTwo) || lastTwo === ".") {
             let subText = displayStr.substring(0, displayStr.length - 1);
-            let subValue = mathStr.substring(0, mathStr.length - 1);
             setDisplayStr(`${subText}${text}`);
-            setMathStr(`${subValue}${value}`);
             setOperator(value);
           }
         } else {
@@ -156,61 +140,43 @@ function App() {
                 before = displayStr.substring(0, index);
                 after = displayStr.substring(index + 1, displayStr.length);
               }
-
-              console.log(before);
-              console.log(displayStr[index]);
-              console.log(after);
-              let test;
+              let newNum;
               let result;
               switch (displayStr[index]) {
                 case "+":
-                  test = new Big(before);
-                  result = test.plus(after);
-                  console.log(result);
-                  console.log(result.valueOf());
+                  newNum = new Big(before);
+                  result = newNum.plus(after);
                   break;
                 case "-":
-                  test = new Big(before);
-                  result = test.minus(after);
-                  console.log(result.valueOf());
+                  newNum = new Big(before);
+                  result = newNum.minus(after);
                   break;
                 case "\u00d7":
-                  test = new Big(before);
-                  result = test.times(after);
-                  console.log(result.valueOf());
+                  newNum = new Big(before);
+                  result = newNum.times(after);
                   break;
                 case "\u00f7":
                   try {
-                    test = new Big(before);
-                    result = test.div(after);
-                    console.log(result.valueOf());
+                    newNum = new Big(before);
+                    result = newNum.div(after);
                   } catch (err) {
                     result = "Infinity";
-                    console.log(result.valueOf());
                   }
                   break;
               }
               setPrevDisplayStr(displayStr);
-              // setIsEqual(true);
               setDisplayStr(result.valueOf());
-              setMathStr(result.valueOf());
               setOperator(null);
-
-              // setPrevDisplayStr(displayStr);
-              // setDisplayStr(`${eval(mathStr).toString()}${text}`);
-              // setMathStr(`${eval(mathStr).toString()}${value}`);
-              // setOperator(value);
             }
           } else {
             setDisplayStr(`${displayStr}${text}`);
-            setMathStr(`${mathStr}${value}`);
             setOperator(value);
           }
         }
         break;
       case "enter":
         const lastChar = displayStr.charAt(displayStr.length - 1);
-        if (isNaN(parseInt(lastChar)) || !operator) {
+        if ((isNaN(parseInt(lastChar)) && lastChar === ".") || !operator) {
           return;
         } else {
           let outputArr = displayStr.split("");
@@ -229,44 +195,33 @@ function App() {
             before = displayStr.substring(0, index);
             after = displayStr.substring(index + 1, displayStr.length);
           }
-
-          console.log(before);
-          console.log(displayStr[index]);
-          console.log(after);
-          let test;
+          let newNum;
           let result;
           switch (displayStr[index]) {
             case "+":
-              test = new Big(before);
-              result = test.plus(after);
-              console.log(result);
-              console.log(typeof result.valueOf());
+              newNum = new Big(before);
+              result = newNum.plus(after);
               break;
             case "-":
-              test = new Big(before);
-              result = test.minus(after);
-              console.log(result.valueOf());
+              newNum = new Big(before);
+              result = newNum.minus(after);
               break;
             case "\u00d7":
-              test = new Big(before);
-              result = test.times(after);
-              console.log(result.valueOf());
+              newNum = new Big(before);
+              result = newNum.times(after);
               break;
             case "\u00f7":
               try {
-                test = new Big(before);
-                result = test.div(after);
-                console.log(result.valueOf());
+                newNum = new Big(before);
+                result = newNum.div(after);
               } catch (err) {
                 result = "Infinity";
-                console.log(result.valueOf());
               }
               break;
           }
           setPrevDisplayStr(displayStr);
           setIsEqual(true);
           setDisplayStr(result.valueOf());
-          setMathStr(result.valueOf());
           setOperator(null);
         }
         break;
@@ -281,7 +236,6 @@ function App() {
             displayStr.toString().includes("NaN")
           ) {
             setDisplayStr("0");
-            setMathStr("0");
             setIsEqual(false);
           } else {
             if (isNaN(displayStr.charAt(displayStr.length - 1))) {
@@ -295,14 +249,11 @@ function App() {
               }
             }
             let newText = displayStr.substring(0, displayStr.length - 1).trim();
-            let newValue = mathStr.substring(0, mathStr.length - 1).trim();
             // if display value is empty, set it back to 0
             if (newText === "") {
               setDisplayStr("0");
-              setMathStr("0");
             } else {
               setDisplayStr(newText);
-              setMathStr(newValue);
             }
             // }
           }
@@ -310,7 +261,6 @@ function App() {
           // AC, reset
           setPrevDisplayStr("");
           setDisplayStr("0");
-          setMathStr("0");
           setOperator(null);
           setIsEqual(false);
         }
@@ -322,13 +272,10 @@ function App() {
           if (input && input !== "0") {
             input = input * -1;
             if (index !== -1) {
-              let subMathString = mathStr.substring(0, index);
               let subDisplayString = displayStr.substring(0, index);
               setDisplayStr(`${subDisplayString}${input.toString()}`);
-              setMathStr(`${subMathString} ${input.toString()}`);
             } else {
               setDisplayStr(input.toString());
-              setMathStr(input.toString());
             }
           }
         }
@@ -337,7 +284,7 @@ function App() {
       case "memory":
         switch (value) {
           case "Memory Save":
-            let [input] = findOperator(mathStr);
+            let [input] = findOperator(displayStr);
             setMemoryValue(input);
             break;
           case "Memory Clear":
@@ -347,13 +294,11 @@ function App() {
             if (memoryValue) {
               if (displayStr.length === 1 && displayStr === "0") {
                 setDisplayStr(memoryValue);
-                setMathStr(memoryValue);
               } else {
                 if (
                   isNaN(displayStr.toString().charAt(displayStr.length - 1))
                 ) {
                   setDisplayStr(`${displayStr}${memoryValue}`);
-                  setMathStr(`${mathStr}${memoryValue}`);
                 }
               }
             }
@@ -390,36 +335,27 @@ function App() {
                   after = displayStr.substring(index + 1, displayStr.length);
                 }
 
-                console.log(before);
-                console.log(displayStr[index]);
-                console.log(after);
-                let test;
+                let newNum;
                 let result;
                 switch (displayStr[index]) {
                   case "+":
-                    test = new Big(before);
-                    result = test.plus(after);
-                    console.log(result);
-                    console.log(result.valueOf());
+                    newNum = new Big(before);
+                    result = newNum.plus(after);
                     break;
                   case "-":
-                    test = new Big(before);
-                    result = test.minus(after);
-                    console.log(result.valueOf());
+                    newNum = new Big(before);
+                    result = newNum.minus(after);
                     break;
                   case "\u00d7":
-                    test = new Big(before);
-                    result = test.times(after);
-                    console.log(result.valueOf());
+                    newNum = new Big(before);
+                    result = newNum.times(after);
                     break;
                   case "\u00f7":
                     try {
-                      test = new Big(before);
-                      result = test.div(after);
-                      console.log(result.valueOf());
+                      newNum = new Big(before);
+                      result = newNum.div(after);
                     } catch (err) {
                       result = "Infinity";
-                      console.log(result.valueOf());
                     }
                     break;
                 }
@@ -460,41 +396,30 @@ function App() {
                   before = displayStr.substring(0, index);
                   after = displayStr.substring(index + 1, displayStr.length);
                 }
-
-                console.log(before);
-                console.log(displayStr[index]);
-                console.log(after);
-                let test;
+                let newNum;
                 let result;
                 switch (displayStr[index]) {
                   case "+":
-                    test = new Big(before);
-                    result = test.plus(after);
-                    console.log(result);
-                    console.log(result.valueOf());
+                    newNum = new Big(before);
+                    result = newNum.plus(after);
                     break;
                   case "-":
-                    test = new Big(before);
-                    result = test.minus(after);
-                    console.log(result.valueOf());
+                    newNum = new Big(before);
+                    result = newNum.minus(after);
                     break;
                   case "\u00d7":
-                    test = new Big(before);
-                    result = test.times(after);
-                    console.log(result.valueOf());
+                    newNum = new Big(before);
+                    result = newNum.times(after);
                     break;
                   case "\u00f7":
                     try {
-                      test = new Big(before);
-                      result = test.div(after);
-                      console.log(result.valueOf());
+                      newNum = new Big(before);
+                      result = newNum.div(after);
                     } catch (err) {
                       result = "Infinity";
-                      console.log(result.valueOf());
                     }
                     break;
                 }
-
                 memorySubtractResult = new Big(result.valueOf());
                 memorySubtractResult = memorySubtractResult.plus(memoryValue);
 
@@ -505,30 +430,22 @@ function App() {
         }
         break;
       case "decimal":
-        if (!isNaN(Number(mathStr))) {
-          console.log("NUM");
-          if (mathStr.indexOf(".") === -1) {
+        if (!isNaN(Number(displayStr))) {
+          if (displayStr.indexOf(".") === -1) {
             setDisplayStr(`${displayStr}${text}`);
-            setMathStr(`${mathStr}${value}`);
           }
         } else {
-          console.log("NOT NUM");
-          console.log(mathStr.lastIndexOf(operator) + 1);
           let outputArr = displayStr.split("");
           let lastOperator = outputArr.reverse().find((item) => {
             return isNaN(parseInt(item)) === true && item !== ".";
           });
 
-          console.log(lastOperator);
           setOperator(lastOperator);
           let lastNumber = displayStr.substring(
             displayStr.lastIndexOf(lastOperator) + 1
           );
-          console.log(lastNumber);
           if (lastNumber.indexOf(".") === -1) {
-            console.log("????");
             setDisplayStr(`${displayStr}${text}`);
-            setMathStr(`${mathStr}${value}`);
           }
         }
         break;
@@ -540,7 +457,6 @@ function App() {
     let lastOperator = outputArr.reverse().find((item) => {
       return isNaN(parseInt(item)) === true && item !== ".";
     });
-    // console.log(lastOperator);
     let index = outputText.lastIndexOf(lastOperator);
     let subString = null;
     if (isNaN(outputText[index - 1]) && outputText[index - 1] !== ".") {
@@ -550,7 +466,6 @@ function App() {
       index = index + 1;
     }
 
-    // console.log(subString);
     if (subString.length > 0) {
       return [subString, index];
     } else {
