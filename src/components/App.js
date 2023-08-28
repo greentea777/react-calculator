@@ -10,7 +10,6 @@ function App() {
   const [displayStr, setDisplayStr] = useState("0");
   const [mathStr, setMathStr] = useState("0");
   const [operator, setOperator] = useState(null);
-  // const [isOperatorClicked, setIsOperatorClicked] = useState(false);
   const [isEqual, setIsEqual] = useState(false);
   const [memoryValue, setMemoryValue] = useState(null);
 
@@ -53,16 +52,6 @@ function App() {
             setMathStr(newValue);
           }
         } else {
-          // Check if the last character is a closing parenthesis
-          // if (mathStr.endsWith(")")) {
-          //   // Append the input as a multiplication operation
-          //   setDisplayStr(`${displayStr}*${text}`);
-          //   setMathStr(`${mathStr}*${value}`);
-          // } else {
-          //   setDisplayStr(`${displayStr}${text}`);
-          //   setMathStr(`${mathStr}${value}`);
-          // }
-
           setDisplayStr(`${displayStr}${text}`);
           setMathStr(`${mathStr}${value}`);
         }
@@ -128,7 +117,6 @@ function App() {
         let last = displayStr.charAt(displayStr.length - 1);
         let lastTwo = displayStr.charAt(displayStr.length - 2);
         if (isNaN(last) && last !== ".") {
-          // console.log(lastTwo);
           if (!isNaN(lastTwo) || lastTwo === ".") {
             let subText = displayStr.substring(0, displayStr.length - 1);
             let subValue = mathStr.substring(0, mathStr.length - 1);
@@ -177,24 +165,12 @@ function App() {
             setMathStr("0");
             setIsEqual(false);
           } else {
-            // if (mathStr.endsWith(")") || mathStr.endsWith("(")) {
-            //   let newValue = mathStr.substring(0, mathStr.length - 2);
-            //   let newText = displayStr.substring(0, displayStr.length - 1);
-            //   if (newText === "") {
-            //     setDisplayStr("0");
-            //     setMathStr("0");
-            //   } else {
-            //     setDisplayStr(newText);
-            //     setMathStr(newValue);
-            //   }
-            // } else {
             if (isNaN(displayStr.charAt(displayStr.length - 1))) {
               setOperator(null);
             }
 
             let newText = displayStr.substring(0, displayStr.length - 1).trim();
             let newValue = mathStr.substring(0, mathStr.length - 1).trim();
-            // if display value is empty, set it back to 0
             if (newText === "") {
               setDisplayStr("0");
               setMathStr("0");
@@ -202,7 +178,6 @@ function App() {
               setDisplayStr(newText);
               setMathStr(newValue);
             }
-            // }
           }
         } else {
           // AC, reset
@@ -282,26 +257,6 @@ function App() {
         }
         break;
       case "decimal":
-        // if (!isNaN(Number(displayStr))) {
-        //   if (displayStr.indexOf(".") !== -1) {
-        //     // There's already a decimal point, allow another input
-        //     setDisplayStr(`${displayStr}${text}`);
-        //     setMathStr(`${mathStr}${value}`);
-        //   } else {
-        //     // No decimal point yet, so check for valid input and add the decimal point
-        //     if (text === ".") {
-        //       setDisplayStr(`${displayStr}${text}`);
-        //       setMathStr(`${mathStr}${value}`);
-        //     }
-        //   }
-        // } else {
-        //   // Handle non-numeric input
-        //   if (text === ".") {
-        //     setDisplayStr(`${displayStr}${text}`);
-        //     setMathStr(`${mathStr}${value}`);
-        //   }
-        // }
-
         if (!isNaN(Number(mathStr))) {
           // console.log("NUM");
           if (mathStr.indexOf(".") === -1) {
